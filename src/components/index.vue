@@ -24,6 +24,7 @@
       <el-aside width="200px" class="index-aside">
         <!-- 导航菜单 -->
         <el-menu router default-active="2" class="el-menu-vertical-demo">
+          <!-- 用户 -->
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -31,6 +32,19 @@
             </template>
             <el-menu-item index="users">
               <i class="el-icon-menu"></i>用户列表
+            </el-menu-item>
+          </el-submenu>
+          <!-- 权限 -->
+          <el-submenu index="2">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>权限管理</span>
+            </template>
+            <el-menu-item index="roles">
+              <i class="el-icon-menu"></i>角色列表
+            </el-menu-item>
+            <el-menu-item index="rights">
+              <i class="el-icon-menu"></i>权限列表
             </el-menu-item>
           </el-submenu>
         </el-menu>
