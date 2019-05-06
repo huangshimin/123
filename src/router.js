@@ -8,6 +8,8 @@ Vue.use(VueRouter)
 // 导入组件
 import login from './components/login.vue'
 import index from './components/index.vue'
+// 嵌套路由的组件
+import users from './components/users.vue'
 
 // 路由规则
 const routes = [
@@ -17,7 +19,13 @@ const routes = [
   },
   {
     path: '/',
-    component: index
+    component: index,
+    children:[
+      {
+        path:'users',// 匹配的规则是 /users
+        component:users
+      }
+    ]
   }
 ]
 
