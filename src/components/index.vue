@@ -18,17 +18,18 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-container>
       <!-- 主体区域 -->
+    <el-container>
+      <!-- 侧边栏 -->
       <el-aside width="200px" class="index-aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo">
+        <!-- 导航菜单 -->
+        <el-menu router default-active="2" class="el-menu-vertical-demo">
           <el-submenu index="1">
-            <!-- 标题 -->
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="1-1">
+            <el-menu-item index="users">
               <i class="el-icon-menu"></i>用户列表
             </el-menu-item>
           </el-submenu>
