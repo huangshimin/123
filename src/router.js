@@ -15,6 +15,8 @@ import rights from './components/rights.vue'
 import goods from './components/goods.vue'
 import params from './components/params.vue'
 import categories from './components/categories.vue'
+import orders from './components/orders.vue'
+import reports from './components/reports.vue'
 
 // 路由规则
 const routes = [
@@ -49,6 +51,14 @@ const routes = [
       {
         path: 'categories', // 匹配的规则是 /categories
         component: categories
+      },
+      {
+        path: 'orders', // 匹配的规则是 /orders
+        component: orders
+      },
+      {
+        path: 'reports', // 匹配的规则是 /reports
+        component: reports
       },
     ]
   }
