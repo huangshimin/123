@@ -47,6 +47,22 @@
               <i class="el-icon-menu"></i>权限列表
             </el-menu-item>
           </el-submenu>
+          <!-- 商品 -->
+          <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>商品管理</span>
+            </template>
+            <el-menu-item index="goods">
+              <i class="el-icon-menu"></i>商品列表
+            </el-menu-item>
+            <el-menu-item index="params">
+              <i class="el-icon-menu"></i>分类参数
+            </el-menu-item>
+            <el-menu-item index="categories">
+              <i class="el-icon-menu"></i>商品分类
+            </el-menu-item>
+          </el-submenu>
         </el-menu>
       </el-aside>
       <el-main class="index-main">
