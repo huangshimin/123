@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="4">
           <div class="grid-content bg-purple">
-            <img class='logo' src="../assets/logo.png" alt>
+            <img class="logo" src="../assets/logo.png" alt>
           </div>
         </el-col>
         <el-col :span="19">
@@ -19,7 +19,21 @@
       </el-row>
     </el-header>
     <el-container>
-      <el-aside width="200px" class="index-aside">Aside</el-aside>
+      <!-- 主体区域 -->
+      <el-aside width="200px" class="index-aside">
+        <el-menu default-active="2" class="el-menu-vertical-demo">
+          <el-submenu index="1">
+            <!-- 标题 -->
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>用户管理</span>
+            </template>
+            <el-menu-item index="1-1">
+              <i class="el-icon-menu"></i>用户列表
+            </el-menu-item>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
       <el-main class="index-main">Main</el-main>
     </el-container>
   </el-container>
@@ -37,11 +51,11 @@ export default {
   .index-header {
     background-color: #b3c0d1;
     line-height: 60px;
-    .logo{
+    .logo {
       height: 60px;
     }
-    .title{
-      color:white;
+    .title {
+      color: white;
       text-align: center;
       font-size: 30px;
       font-weight: 900;
