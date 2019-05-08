@@ -29,8 +29,8 @@ const routes = [
     component: index,
     children: [
       {
-        path:'',// 等同于/
-        redirect:'users'
+        path: '', // 等同于/
+        redirect: 'users'
       },
       {
         path: 'users', // 匹配的规则是 /users
@@ -63,7 +63,7 @@ const routes = [
       {
         path: 'reports', // 匹配的规则是 /reports
         component: reports
-      },
+      }
     ]
   }
 ]
