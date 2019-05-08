@@ -65,16 +65,18 @@ export default {
         if (valid) {
           // 数据格式没问题
           this.$request.login(this.loginForm).then(res => {
-            // console.log(res);
+            console.log(res);
             // 错误提示
             if (res.data.meta.status === 400) {
               this.$message.warning(res.data.meta.msg);
             } else if (res.data.meta.status === 200) {
               // 对 去首页
               this.$message.success(res.data.meta.msg);
-              // 代码方式跳转 window.location.href  
-              // 编程式导航 
-              this.$router.push('/')
+              // 保存token
+              window.sessionStorage.setItem('token',res.data.data.token)
+              // 代码方式跳转 window.location.href
+              // 编程式导航
+              this.$router.push("/");
             }
           });
         } else {

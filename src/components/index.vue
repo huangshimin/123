@@ -13,12 +13,12 @@
         </el-col>
         <el-col :span="1">
           <div class="grid-content bg-purple">
-            <el-button type="danger" icon="el-icon-delete" circle></el-button>
+            <el-button type="danger" icon="el-icon-delete" circle @click="logout"></el-button>
           </div>
         </el-col>
       </el-row>
     </el-header>
-      <!-- 主体区域 -->
+    <!-- 主体区域 -->
     <el-container>
       <!-- 侧边栏 -->
       <el-aside width="200px" class="index-aside">
@@ -82,7 +82,6 @@
             <el-menu-item index="reports">
               <i class="el-icon-menu"></i>数据报表
             </el-menu-item>
-    
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -96,7 +95,24 @@
 
 <script>
 export default {
-  name: "index"
+  name: "index",
+  beforeCreate() {
+    if (!window.sessionStorage.getItem("token")) {
+      // 没有登录 打会登录页
+      this.$message.warning("哥们，先登录");
+      // 编程式导航
+      this.$router.push("login");
+    }
+  },
+  // 方法
+  methods: {
+    logout(){
+      // 删除token    .clear(清空)
+      window.sessionStorage.removeItem('token')
+      // 编程式导航
+      this.$router.push('login')
+    }
+  },
 };
 </script>
 
