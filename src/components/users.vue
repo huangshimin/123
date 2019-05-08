@@ -16,7 +16,7 @@
       </el-col>
       <el-col :span="12">
         <!-- 按钮 -->
-        <el-button type="success" plain>添加用户</el-button>
+        <el-button type="success" @click="addVisible=true" plain>添加用户</el-button>
       </el-col>
     </el-row>
     <!-- table -->
@@ -32,7 +32,12 @@
               template中必须设置 slot-scope="scope"
           scope.$index 索引  scope.row 这一行的数据-->
           <!-- 开关 switch -->
-          <el-switch v-model="niubi.row.mg_state" active-color="#cb8c60" inactive-color="#a39b5d"></el-switch>
+          <el-switch
+            v-model="niubi.row.mg_state"
+            @change="stateChange(niubi.row)"
+            active-color="#cb8c60"
+            inactive-color="#a39b5d"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -66,6 +71,27 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="400"
     ></el-pagination>
+    <!-- 新增框 -->
+    <el-dialog title="添加用户" :visible.sync="addVisible">
+      <el-form :model="addForm" :rules="addRules" ref="addForm">
+        <el-form-item label="用户名" label-width="120px" prop="username">
+          <el-input v-model="addForm.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" label-width="120px" prop="password">
+          <el-input v-model="addForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" label-width="120px">
+          <el-input v-model="addForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" label-width="120px">
+          <el-input v-model="addForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('addForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -103,6 +129,26 @@ export default {
         query: "",
         pagenum: 1,
         pagesize: 10
+      },
+      // 是否显示新增框
+      addVisible: false,
+      // 新增的数据
+      addForm: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
+      },
+      // 新增表单的验证规则
+      addRules: {
+        username: [
+          { required: true, message: "用户名不能为空", trigger: "blur" },
+          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "密码也不能为空", trigger: "blur" },
+          { min: 6, max: 12, message: "长度在 6 到 12 个字符", trigger: "blur" }
+        ]
       }
     };
   },
@@ -112,17 +158,81 @@ export default {
       console.log(index);
       console.log(row);
     },
+    // 获取数据的方法
+    getUsers() {
+      this.$request.getUsers(this.userData).then(res => {
+        // console.log(res);
+        this.tableData = res.data.data.users;
+      });
+    },
+    // 删除用户
     handleDelete(index, row) {
-      console.log(index);
-      console.log(row);
+      // console.log(index);
+      // console.log(row);
+      this.$confirm("你真的要把他干掉吗o(╥﹏╥)o！！", "提示", {
+        confirmButtonText: "残忍删除",
+        cancelButtonText: "容朕三思",
+        type: "warning"
+      })
+        .then(() => {
+          // 调用接口
+          this.$request.deleteUserById(row.id).then(res => {
+            // console.log(res);
+            // 重新获取数据
+            if (res.data.meta.status == 200) {
+              this.getUsers();
+            }
+          });
+        })
+        .catch(() => {
+          // 取消
+          this.$message({
+            type: "info",
+            message: "你真好！(* ￣3)(ε￣ *)"
+          });
+        });
+    },
+    // 状态 改变
+    stateChange(row) {
+      // console.log(row);
+      this.$request
+        .updateUserStatus({ id: row.id, type: row.mg_state })
+        .then(res => {
+          // console.log(res);
+          // if(res.data.meta.status==200){
+          //   this.$message.success(res.data.meta.msg)
+          // }
+        });
+    },
+    // 用户新增
+    // 提交表单
+    submitForm(formName) {
+      // 通过ref属性 获取表单 并且调用验证的方法
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // 数据格式没问题
+          // 提交数据
+          this.$request.addUser(this.addForm).then(res => {
+            console.log(res);
+            // 关闭弹框
+            this.addVisible = false;
+            // 重新获取数据
+            this.getUsers();
+            // 重置表单即可
+            this.$refs[formName].resetFields();
+          });
+        } else {
+          // 数据有问题
+          this.$message.error("哥们，数据格式不对哦，你是机器人吗？");
+          return false;
+        }
+      });
     }
   },
   // 调用接口
   created() {
-    this.$request.getUsers(this.userData).then(res => {
-      // console.log(res);
-      this.tableData = res.data.data.users;
-    });
+    // 调用方法
+    this.getUsers();
   }
 };
 </script>
