@@ -19,7 +19,11 @@
 
 <script>
 export default {
-  name: "login"
+  name: "login",
+  // 生命周期 钩子
+  created() {
+    this.$request.sayHi()
+  },
 };
 </script>
 
