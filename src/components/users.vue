@@ -21,9 +21,42 @@
     </el-row>
     <!-- table -->
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+      <!-- 索引 -->
+      <el-table-column type="index" width="50"></el-table-column>
+      <el-table-column prop="username" label="姓名" width="180"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
+      <el-table-column prop="mobile" label="电话"></el-table-column>
+      <el-table-column prop="mg_state" label="用户状态">
+        <template slot-scope="niubi">
+          <!-- 
+              template中必须设置 slot-scope="scope"
+          scope.$index 索引  scope.row 这一行的数据-->
+          <!-- 开关 switch -->
+          <el-switch v-model="niubi.row.mg_state" active-color="#cb8c60" inactive-color="#a39b5d"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="niubi">
+          <!-- 
+              template中必须设置 slot-scope="scope"
+          scope.$index 索引  scope.row 这一行的数据-->
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleEdit(niubi.$index, niubi.row)"
+            plain
+            size="mini"
+          ></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDelete(niubi.$index, niubi.row)"
+            plain
+            size="mini"
+          ></el-button>
+          <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -73,10 +106,22 @@ export default {
       }
     };
   },
+  // 方法
+  methods: {
+    handleEdit(index, row) {
+      console.log(index);
+      console.log(row);
+    },
+    handleDelete(index, row) {
+      console.log(index);
+      console.log(row);
+    }
+  },
   // 调用接口
   created() {
     this.$request.getUsers(this.userData).then(res => {
-      console.log(res);
+      // console.log(res);
+      this.tableData = res.data.data.users;
     });
   }
 };
