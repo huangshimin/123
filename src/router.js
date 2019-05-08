@@ -29,6 +29,10 @@ const routes = [
     component: index,
     children: [
       {
+        path:'',// 等同于/
+        redirect:'users'
+      },
+      {
         path: 'users', // 匹配的规则是 /users
         component: users
       },

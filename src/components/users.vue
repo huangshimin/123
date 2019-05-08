@@ -1,7 +1,7 @@
 <template>
   <div class="user-container">
     <!-- 面包屑 -->
-    <el-breadcrumb class='my-breadcrumb' separator-class="el-icon-arrow-right">
+    <el-breadcrumb class="my-breadcrumb" separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
@@ -64,14 +64,26 @@ export default {
           name: "王小花",
           address: "上海市普陀区金沙江路 1516 弄"
         }
-      ]
+      ],
+      // 增加提交的数据
+      userData: {
+        query: "",
+        pagenum: 1,
+        pagesize: 10
+      }
     };
+  },
+  // 调用接口
+  created() {
+    this.$request.getUsers(this.userData).then(res => {
+      console.log(res);
+    });
   }
 };
 </script>
 
 <style  lang='scss'>
-.my-breadcrumb{
+.my-breadcrumb {
   height: 45px;
   line-height: 45px;
   background-color: #d3dce6;

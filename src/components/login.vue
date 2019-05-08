@@ -73,7 +73,7 @@ export default {
               // 对 去首页
               this.$message.success(res.data.meta.msg);
               // 保存token
-              window.sessionStorage.setItem('token',res.data.data.token)
+              window.sessionStorage.setItem("token", res.data.data.token);
               // 代码方式跳转 window.location.href
               // 编程式导航
               this.$router.push("/");
