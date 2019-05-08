@@ -64,6 +64,19 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 数据格式没问题
+          this.$request.login(this.loginForm).then(res => {
+            // console.log(res);
+            // 错误提示
+            if (res.data.meta.status === 400) {
+              this.$message.warning(res.data.meta.msg);
+            } else if (res.data.meta.status === 200) {
+              // 对 去首页
+              this.$message.success(res.data.meta.msg);
+              // 代码方式跳转 window.location.href  
+              // 编程式导航 
+              this.$router.push('/')
+            }
+          });
         } else {
           // 数据有问题
           this.$message.error("哥们，数据格式不对哦，你是机器人吗？");
@@ -75,10 +88,6 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }
-  },
-  // 生命周期 钩子
-  created() {
-    this.$request.sayHi();
   }
 };
 </script>
