@@ -71,7 +71,7 @@
     <!-- 分页 -->
     <el-pagination
       :current-page="userData.pagenum"
-      :page-sizes="[2, 4, 6, 9]"
+      :page-sizes="[2, 4, 6, 8,10]"
       :page-size="userData.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -97,6 +97,24 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="addVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('addForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑框 -->
+    <el-dialog title="编辑用户" :visible.sync="editVisible">
+      <el-form :model="editForm" :rules="addRules" ref="editForm">
+        <el-form-item label="用户名" label-width="120px" prop="username">
+          <el-input v-model="editForm.username" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" label-width="120px">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" label-width="120px">
+          <el-input v-model="editForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -158,14 +176,31 @@ export default {
         ]
       },
       // 数据总条数
-      total: 0
+      total: 0,
+      // 是否显示编辑框
+      editVisible: false,
+      // 编辑的数据
+      editForm: {
+        username: "",
+        email: "",
+        mobile: ""
+      }
     };
   },
   // 方法
   methods: {
+    // 点击编辑按钮
     handleEdit(index, row) {
-      console.log(index);
-      console.log(row);
+      // console.log(index);
+      // console.log(row);
+      // 调用接口
+      this.$request.getUserById(row.id).then(res => {
+        // console.log(res);
+        // 数据获取
+        this.editForm = res.data.data;
+        // 弹框
+        this.editVisible = true;
+      });
     },
     // 获取数据的方法
     getUsers() {
@@ -223,15 +258,28 @@ export default {
         if (valid) {
           // 数据格式没问题
           // 提交数据
-          this.$request.addUser(this.addForm).then(res => {
-            console.log(res);
-            // 关闭弹框
-            this.addVisible = false;
-            // 重新获取数据
-            this.getUsers();
-            // 重置表单即可
-            this.$refs[formName].resetFields();
-          });
+          if (formName == "editForm") {
+            // 编辑用户
+            this.$request.updateUser(this.editForm).then(res => {
+              // console.log(res);
+              if(res.data.meta.status==200){
+                // 重新获取数据
+                this.getUsers()
+                // 关闭弹框
+                this.editVisible = false;
+              }
+            });
+          } else {
+            this.$request.addUser(this.addForm).then(res => {
+              console.log(res);
+              // 关闭弹框
+              this.addVisible = false;
+              // 重新获取数据
+              this.getUsers();
+              // 重置表单即可
+              this.$refs[formName].resetFields();
+            });
+          }
         } else {
           // 数据有问题
           this.$message.error("哥们，数据格式不对哦，你是机器人吗？");

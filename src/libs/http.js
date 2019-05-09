@@ -67,14 +67,25 @@ const request = {
   updateUserStatus(params) {
     return axios.put(`users/${params.id}/state/${params.type}`)
   },
-   // 删除用户
+  // 删除用户
   // 传递 id type
   deleteUserById(id) {
     return axios.delete(`users/${id}`)
   },
   // 添加用户
-  addUser(params){
-    return axios.post('users',params)
+  addUser(params) {
+    return axios.post('users', params)
+  },
+  // 根据id获取用户信息
+  getUserById(id) {
+    return axios.get(`users/${id}`)
+  },
+  // 用户修改
+  updateUser(params) {
+    return axios.put(`users/${params.id}`, {
+      email: params.email,
+      mobile: params.mobile
+    })
   }
 }
 
