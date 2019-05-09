@@ -88,14 +88,18 @@ const request = {
     })
   },
   // 获取角色列表
-  getRoles(){
+  getRoles() {
     return axios.get('roles')
   },
   // 分配用户角色
-  updateUserRole(params){
-    return axios.put(`users/${params.id}/role`,{
-      rid:params.rid
+  updateUserRole(params) {
+    return axios.put(`users/${params.id}/role`, {
+      rid: params.rid
     })
+  },
+  // 新增角色
+  addRoles(params) {
+    return axios.post(`roles`, params)
   }
 }
 
