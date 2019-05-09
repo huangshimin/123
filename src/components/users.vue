@@ -64,7 +64,14 @@
             plain
             size="mini"
           ></el-button>
-          <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
+          <!-- 角色 -->
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            plain
+            size="mini"
+            @click="handleRole(niubi.row)"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -115,6 +122,29 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 角色框 -->
+    <el-dialog title="分配角色" :visible.sync="roleVisible">
+      <el-form :model="roleForm" :rules="addRules" ref="roleForm">
+        <el-form-item label="用户名" label-width="120px" prop="username">
+          <el-input v-model="roleForm.username" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="请选择角色" label-width="120px">
+          <el-select v-model="roleValue" placeholder="请选择">
+            <el-option label="未分配角色" :value="-1"></el-option>
+            <el-option
+              v-for="item in roles"
+              :key="item.value"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="roleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('roleForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -184,7 +214,15 @@ export default {
         username: "",
         email: "",
         mobile: ""
-      }
+      },
+      // 角色框是否显示
+      roleVisible: false,
+      // 角色数据
+      roleForm: {},
+      // 所有的角色
+      roles: [],
+      // select的双向数据绑定
+      roleValue: ""
     };
   },
   // 方法
@@ -262,13 +300,30 @@ export default {
             // 编辑用户
             this.$request.updateUser(this.editForm).then(res => {
               // console.log(res);
-              if(res.data.meta.status==200){
+              if (res.data.meta.status == 200) {
                 // 重新获取数据
-                this.getUsers()
+                this.getUsers();
                 // 关闭弹框
                 this.editVisible = false;
               }
             });
+          } else if (formName == "roleForm") {
+            this.$request
+              .updateUserRole({
+                // 用户id
+                id: this.roleForm.id,
+                // 角色id el-select双向数据绑定的值
+                rid: this.roleValue
+              })
+              .then(res => {
+                // console.log(res);
+                if (res.data.meta.status == 200) {
+                  // 重新获取角色
+                  this.getUsers();
+                  // 关闭角色框
+                  this.roleVisible = false;
+                }
+              });
           } else {
             this.$request.addUser(this.addForm).then(res => {
               console.log(res);
@@ -298,6 +353,24 @@ export default {
       // console.log(size);
       this.userData.pagesize = size;
       this.getUsers();
+    },
+    // 弹出角色框
+    handleRole(row) {
+      // 获取用户数据
+      this.$request.getUserById(row.id).then(res => {
+        // console.log(res);
+        // 保存数据
+        this.roleForm = res.data.data;
+        // 获取角色数据
+        this.$request.getRoles().then(res => {
+          // console.log(res);
+          this.roles = res.data.data;
+          // 弹框
+          this.roleVisible = true;
+          // 设置默认选中 roleValue的值 跟 this.roleForm.rid
+          this.roleValue = this.roleForm.rid;
+        });
+      });
     }
   },
   // 调用接口
