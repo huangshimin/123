@@ -14,12 +14,40 @@
       </el-col>
     </el-row>
     <!-- table -->
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="tableData" style="width: 100%" border>
+      <el-table-column type="index" width="50"></el-table-column>
+      <el-table-column prop="roleName" label="角色名称" width="180"></el-table-column>
+      <el-table-column prop="roleDesc" label="角色描述" width="180"></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="niubi">
+          <!-- 
+              template中必须设置 slot-scope="scope"
+          scope.$index 索引  scope.row 这一行的数据-->
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleEdit(niubi.$index, niubi.row)"
+            plain
+            size="mini"
+          ></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDelete(niubi.$index, niubi.row)"
+            plain
+            size="mini"
+          ></el-button>
+          <!-- 角色 -->
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            plain
+            size="mini"
+            @click="handleRole(niubi.row)"
+          ></el-button>
+        </template>
+      </el-table-column>
     </el-table>
- 
   </div>
 </template>
 
@@ -53,7 +81,28 @@ export default {
         }
       ]
     };
-  }
+  },
+  // 生命周期钩子
+  created() {
+    this.$request.getRoles().then(res => {
+      // 需要稍微处理一下数据
+      let data = res.data.data;
+      // 遍历把children属性移除
+      data.forEach(v => {
+        v._children = v.children;
+        // 删除children属性
+        delete v.children;
+      });
+      // console.log(data)
+      this.tableData = data;
+    });
+  },
+  // 方法
+  methods: {
+    handleEdit(index,row){},
+    handleDelete(index,row){},
+    handleRole(row){}
+  },
 };
 </script>
 
