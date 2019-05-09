@@ -2,6 +2,8 @@
 import axios from 'axios'
 // 导入Vue $message Vue的原型上 实例化一个Vue
 import Vue from 'vue'
+// 导入路由对象
+import router from '../router'
 
 // 设置基地址
 axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
@@ -35,6 +37,15 @@ axios.interceptors.response.use(
       Vue.prototype.$message.success(response.data.meta.msg)
       // 实例化Vue
       // new Vue().$message.success(response.data.meta.msg)
+    } else if (
+      response.data.meta.status == 400 &&
+      response.data.meta.msg == '无效token'
+    ) {
+      new Vue().$message.warning('token好像是你伪造的哟，小子阔以的！')
+      // 编程式导航
+      router.push('login')
+      // 删除token
+      window.sessionStorage.clear('token')
     }
     return response
   },
@@ -100,6 +111,21 @@ const request = {
   // 新增角色
   addRoles(params) {
     return axios.post(`roles`, params)
+  },
+  // 删除角色
+  deleteRoles(id) {
+    return axios.delete(`roles/${id}`)
+  },
+  // 获取角色信息
+  getRolesById(id) {
+    return axios.get(`roles/${id}`)
+  },
+  // 修改角色
+  updateRoles(params) {
+    return axios.put(`roles/${params.id}`, {
+      roleName: params.roleName,
+      roleDesc: params.roleDesc
+    })
   }
 }
 
