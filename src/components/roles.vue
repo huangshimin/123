@@ -63,6 +63,21 @@
         <el-button type="primary" @click="submitForm('addForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑角色框 -->
+    <el-dialog title="编辑角色" :visible.sync="editVisible">
+      <el-form :model="editForm" :rules="addRules" ref="editForm">
+        <el-form-item label="角色名称" label-width="120px" prop="roleName">
+          <el-input v-model="editForm.roleName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" label-width="120px">
+          <el-input v-model="editForm.roleDesc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -108,17 +123,59 @@ export default {
           { required: true, message: "角色名称不能为空", trigger: "blur" },
           { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ]
+      },
+      // 是否显示编辑框
+      editVisible: false,
+      // 编辑的数据
+      editForm: {
+        roleName: "",
+        roleDesc: ""
       }
     };
   },
   // 生命周期钩子
   created() {
-    this.getRoles()
+    this.getRoles();
   },
   // 方法
   methods: {
-    handleEdit(index, row) {},
-    handleDelete(index, row) {},
+    // 进入编辑状态
+    handleEdit(index, row) {
+      this.$request.getRolesById(row.id).then(res => {
+        // console.log(res);
+        // 保存起来
+        this.editForm = res.data.data;
+        // 弹框
+        this.editVisible = true;
+      });
+    },
+    // 删除的点击事件
+    handleDelete(index, row) {
+      this.$confirm(
+        "此操作将永远删除这个角色，是否确定，友情提示别删主管！！！",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          // 调用接口即可
+          this.$request.deleteRoles(row.id).then(res => {
+            // console.log(res);
+            if (res.data.meta.status == 200) {
+              this.getRoles();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
     handleRole(row) {},
     // 获取角色的方法
     getRoles() {
@@ -141,17 +198,30 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 数据格式没问题
-          // 提交数据
-
-          this.$request.addRoles(this.addForm).then(res => {
-            console.log(res);
-            // 关闭弹框
-            this.addVisible = false;
-            // 重新获取数据
-            this.getRoles();
-            // 重置表单即可
-            this.$refs[formName].resetFields();
-          });
+          if (formName == "editForm") {
+            // 提交数据
+            this.editForm.id = this.editForm.roleId;
+            this.$request.updateRoles(this.editForm).then(res => {
+              console.log(res);
+              // 关闭弹框
+              this.editVisible = false;
+              // 重新获取数据
+              this.getRoles();
+              // 重置表单即可
+              this.$refs[formName].resetFields();
+            });
+          } else {
+            // 提交数据
+            this.$request.addRoles(this.addForm).then(res => {
+              console.log(res);
+              // 关闭弹框
+              this.addVisible = false;
+              // 重新获取数据
+              this.getRoles();
+              // 重置表单即可
+              this.$refs[formName].resetFields();
+            });
+          }
         } else {
           // 数据有问题
           this.$message.error("哥们，数据格式不对哦，你是机器人吗？");
