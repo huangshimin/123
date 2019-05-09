@@ -10,8 +10,13 @@
     <el-row>
       <el-col :span="6">
         <!-- 输入框 -->
-        <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input
+          placeholder="请输入内容"
+          v-model="userData.query"
+          @keyup.native.enter="getUsers"
+          class="input-with-select"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="getUsers"></el-button>
         </el-input>
       </el-col>
       <el-col :span="12">
@@ -65,11 +70,13 @@
     </el-table>
     <!-- 分页 -->
     <el-pagination
-      :current-page="1"
+      :current-page="userData.pagenum"
       :page-sizes="[2, 4, 6, 9]"
-      :page-size="4"
+      :page-size="userData.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
+      :total="total"
+      @size-change="sizeChange"
+      @current-change="currentChange"
     ></el-pagination>
     <!-- 新增框 -->
     <el-dialog title="添加用户" :visible.sync="addVisible">
@@ -149,7 +156,9 @@ export default {
           { required: true, message: "密码也不能为空", trigger: "blur" },
           { min: 6, max: 12, message: "长度在 6 到 12 个字符", trigger: "blur" }
         ]
-      }
+      },
+      // 数据总条数
+      total: 0
     };
   },
   // 方法
@@ -163,6 +172,8 @@ export default {
       this.$request.getUsers(this.userData).then(res => {
         // console.log(res);
         this.tableData = res.data.data.users;
+        // 保存总条数
+        this.total = res.data.data.total;
       });
     },
     // 删除用户
@@ -227,6 +238,18 @@ export default {
           return false;
         }
       });
+    },
+    // 页码改变
+    currentChange(current) {
+      // console.log(current);
+      this.userData.pagenum = current;
+      this.getUsers();
+    },
+    // 页容量改变
+    sizeChange(size) {
+      // console.log(size);
+      this.userData.pagesize = size;
+      this.getUsers();
     }
   },
   // 调用接口
