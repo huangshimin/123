@@ -22,20 +22,32 @@
           <el-row v-for="(level1,index) in props.row._children" :key="index">
             <el-col :span="6">
               <!-- 第一级tag -->
-              <el-tag type="primary" :key="level1.id" closable>{{level1.authName}}</el-tag>
+              <el-tag
+                type="primary"
+                :key="level1.id"
+                @close="delRight(props.row,level1.id)"
+                closable
+              >{{level1.authName}}</el-tag>
               <span class="el-icon-arrow-right"></span>
             </el-col>
             <el-col :span="18">
               <el-row v-for="(level2,i) in level1.children" :key="i">
                 <el-col :span="6">
                   <!-- 第二级tag -->
-                  <el-tag type="success" :key="level2.id" closable>{{level2.authName}}</el-tag>
+                  <el-tag
+                    type="success"
+                    :key="level2.id"
+                    @close="delRight(props.row,level2.id)"
+                    closable
+                  >{{level2.authName}}</el-tag>
                   <span class="el-icon-arrow-right"></span>
                 </el-col>
                 <el-col :span="18">
+                  <!-- 第三级tag -->
                   <el-tag
                     v-for="(level3,j) in level2.children"
                     :key="level3.id"
+                    @close="delRight(props.row,level3.id)"
                     type="warning"
                     closable
                     class="my-tag"
@@ -259,6 +271,21 @@ export default {
           return false;
         }
       });
+    },
+    // 删除指定权限
+    delRight(row, rightId) {
+      this.$request
+        .deleteRight({
+          roleId: row.id,
+          rightId
+        })
+        .then(res => {
+          // console.log(res);
+          // 把新的权限数据 保存起来即可
+          // 复杂数据的传递 传递的是 地址（引用）
+          // table中的某个数据也改变
+          row._children = res.data.data;
+        });
     }
   }
 };
@@ -271,7 +298,7 @@ export default {
   background-color: #d3dce6;
   padding-left: 10px;
 }
-.my-tag{
+.my-tag {
   margin-right: 5px;
   margin-bottom: 5px;
 }
