@@ -149,6 +149,10 @@ const request = {
   // 删除角色指定权限
   deleteRight(params){
     return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`)
+  },
+  // 获取树形权限数据
+  getRightsTree(){
+    return axios.get('rights/tree')
   }
 }
 

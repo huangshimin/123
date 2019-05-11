@@ -80,7 +80,7 @@
             plain
             size="mini"
           ></el-button>
-          <!-- 角色 -->
+          <!-- 权限分配 -->
           <el-button
             type="success"
             icon="el-icon-check"
@@ -119,6 +119,22 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 树形权限框框 -->
+    <el-dialog title="分配权限" :visible.sync="rightsVisible">
+      <!-- 树形菜单 -->
+      <el-tree
+        :data="rightsData"
+        :props="rightsProps"
+        :default-checked-keys="defaultCheckedKeys"
+        node-key="id"
+        show-checkbox
+        default-expand-all
+      ></el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="rightsVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('rightsForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -173,7 +189,20 @@ export default {
       editForm: {
         roleName: "",
         roleDesc: ""
-      }
+      },
+      // 是否显示权限框
+      rightsVisible: false,
+      // 权限的数据
+      rightsForm: {},
+      // 所有的权限
+      rightsData: [],
+      // 属性的对应关系
+      rightsProps: {
+        children: "children",
+        label: "authName"
+      },
+      // 默认的选中权限
+      defaultCheckedKeys: []
     };
   },
   // 生命周期钩子
@@ -219,7 +248,31 @@ export default {
           });
         });
     },
-    handleRole(row) {},
+    // 弹出权限框
+    handleRole(row) {
+      this.rightsVisible = true;
+      this.$request.getRightsTree().then(res => {
+        // console.log(res);
+        // 保存数据
+        this.rightsData = res.data.data;
+        // 设置选中的值
+        let checkedIds = [];
+        // 一级
+        row._children.forEach(v1 => {
+          checkedIds.push(v1.id);
+          // 二级
+          v1.children.forEach(v2 => {
+            checkedIds.push(v2.id);
+            // 三级
+            v2.children.forEach(v3 => {
+              checkedIds.push(v3.id);
+            });
+          });
+        });
+        // 设置到data中
+        this.defaultCheckedKeys = checkedIds;
+      });
+    },
     // 获取角色的方法
     getRoles() {
       this.$request.getRoles().then(res => {

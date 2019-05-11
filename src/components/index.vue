@@ -106,13 +106,13 @@ export default {
   },
   // 方法
   methods: {
-    logout(){
+    logout() {
       // 删除token    .clear(清空)
-      window.sessionStorage.removeItem('token')
+      window.sessionStorage.removeItem("token");
       // 编程式导航
-      this.$router.push('login')
+      this.$router.push("login");
     }
-  },
+  }
 };
 </script>
 
