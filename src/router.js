@@ -67,8 +67,8 @@ const routes = [
       },
       // 错误页
       {
-        path:'error',
-        component:error
+        path: 'error',
+        component: error
       }
     ]
   }
@@ -76,6 +76,8 @@ const routes = [
 
 // 实例化路由对象
 const router = new VueRouter({
+  // 使用history模式 让他更美观
+  mode: 'history',
   routes
 })
 
@@ -86,10 +88,10 @@ router.beforeEach((to, from, next) => {
   // console.log(to)
   // // 来的路由
   // console.log(from)
-  if(to.matched.length==0){
+  if (to.matched.length == 0) {
     // 不存在
     next('error')
-  }else{
+  } else {
     // 必须要执行 不执行跟node.js中的中间件一样 不会往后走了
     next()
   }

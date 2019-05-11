@@ -56,7 +56,9 @@
             @click="handleEdit(niubi.$index, niubi.row)"
             plain
             size="mini"
-          ></el-button>
+          >
+           
+          </el-button>
           <el-button
             type="danger"
             icon="el-icon-delete"
