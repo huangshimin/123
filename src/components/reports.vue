@@ -15,7 +15,7 @@
 // 导入echarts
 import echarts from "echarts";
 export default {
-  name: "users",
+  name: "reports",
   // 数据
   data() {
     return {
@@ -123,6 +123,11 @@ export default {
         // 挨个替换
         this.option[key] = backData[key];
       }
+      // 设置x轴顶格
+      // 默认值就是category 不写也可以
+      // this.option.xAxis[0].type = "category";
+      // x轴的留白策略
+      this.option.xAxis[0].boundaryGap = false;
       // console.log(document.getElementById("main"));
       // // 基于准备好的dom，初始化echarts实例
       var myChart = echarts.init(document.getElementById("main"));

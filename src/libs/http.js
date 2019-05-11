@@ -131,12 +131,18 @@ const request = {
     })
   },
   // 权限列表
-  getListRights(){
+  getListRights() {
     return axios.get(`rights/list`)
   },
   // 获取展示的数据
-  getReports(){
+  getReports() {
     return axios.get('reports/type/1')
+  },
+  // 获取订单列表
+  getOrderList(params){
+    return axios.get('orders',{
+      params
+    })
   }
 }
 

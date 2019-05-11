@@ -1,16 +1,37 @@
 <template>
   <div class="user-container">
     <!-- 面包屑 -->
-    <el-breadcrumb class='my-breadcrumb' separator-class="el-icon-arrow-right">
+    <el-breadcrumb class="my-breadcrumb" separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>订单管理</el-breadcrumb-item>
       <el-breadcrumb-item>订单列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- table -->
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="tableData" style="width: 100%" border>
+      <el-table-column type="index"></el-table-column>
+      <el-table-column prop="order_number" label="订单标号" width="180"></el-table-column>
+      <el-table-column prop="order_price" label="订单价格" width="180"></el-table-column>
+      <el-table-column prop="order_price" label="是否付款" width="180">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.pay_status==0" type="danger" plain>未付款</el-button>
+          <el-button v-else type="success" plain>已付款</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="is_send" label="是否发货"></el-table-column>
+      <el-table-column label="是否发货">
+        <template slot-scope="scope">{{ scope.row.create_time|formatTime }}</template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleEdit(scope.$index, scope.row)"
+            plain
+            size="mini"
+          ></el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -24,6 +45,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "orders",
   // 数据
@@ -51,14 +73,32 @@ export default {
           name: "王小花",
           address: "上海市普陀区金沙江路 1516 弄"
         }
-      ]
+      ],
+      // 接口调用数据
+      orderData: {
+        pagenum: 1,
+        pagesize: 10
+      }
     };
+  },
+  // 本地过滤器
+  filters: {
+    formatTime(value) {
+      return moment(value).format("YYYY-MM-DD HH:mm:ss");
+    }
+  },
+  created() {
+    // 初始数据获取
+    this.$request.getOrderList(this.orderData).then(res => {
+      // console.log(res);
+      this.tableData = res.data.data.goods;
+    });
   }
 };
 </script>
 
 <style  lang='scss'>
-.my-breadcrumb{
+.my-breadcrumb {
   height: 45px;
   line-height: 45px;
   background-color: #d3dce6;
