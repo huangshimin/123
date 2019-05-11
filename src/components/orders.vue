@@ -37,12 +37,12 @@
     ></el-pagination>
     <!-- 编辑框 -->
     <el-dialog title="修改订单地址" :visible.sync="editVisible">
-      <el-form :model="editForm" :rules="addRules" ref="editForm">
+      <el-form :model="editForm"  ref="editForm">
         <el-form-item label="省市区/县" label-width="120px">
           <!-- 方法1 用级联选择器 -->
           <el-cascader expand-trigger="hover" :options="options" v-model="selectedOptions2"></el-cascader>
           <!-- 方法2 用独立的省市联动组件 -->
-          <v-distpicker></v-distpicker>
+          <v-distpicker @selected='selected'></v-distpicker>
         </el-form-item>
         <el-form-item label="详细地址" label-width="120px">
           <el-input v-model="editForm.address" autocomplete="off"></el-input>
@@ -122,7 +122,13 @@ export default {
       // console.log(res);
       this.tableData = res.data.data.goods;
     });
-  }
+  },
+  // 方法
+  methods: {
+    selected(ssq){
+      console.log(ssq);
+    }
+  },
 };
 </script>
 

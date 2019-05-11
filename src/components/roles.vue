@@ -15,6 +15,37 @@
     </el-row>
     <!-- table -->
     <el-table :data="tableData" style="width: 100%" border>
+      <!-- 设置展开 -->
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <!-- 最顶级的row -->
+          <el-row v-for="(level1,index) in props.row._children" :key="index">
+            <el-col :span="6">
+              <!-- 第一级tag -->
+              <el-tag type="primary" :key="level1.id" closable>{{level1.authName}}</el-tag>
+              <span class="el-icon-arrow-right"></span>
+            </el-col>
+            <el-col :span="18">
+              <el-row v-for="(level2,i) in level1.children" :key="i">
+                <el-col :span="6">
+                  <!-- 第二级tag -->
+                  <el-tag type="success" :key="level2.id" closable>{{level2.authName}}</el-tag>
+                  <span class="el-icon-arrow-right"></span>
+                </el-col>
+                <el-col :span="18">
+                  <el-tag
+                    v-for="(level3,j) in level2.children"
+                    :key="level3.id"
+                    type="warning"
+                    closable
+                    class="my-tag"
+                  >{{level3.authName}}</el-tag>
+                </el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </template>
+      </el-table-column>
       <el-table-column type="index" width="50"></el-table-column>
       <el-table-column prop="roleName" label="角色名称" width="180"></el-table-column>
       <el-table-column prop="roleDesc" label="角色描述" width="180"></el-table-column>
@@ -239,5 +270,9 @@ export default {
   line-height: 45px;
   background-color: #d3dce6;
   padding-left: 10px;
+}
+.my-tag{
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 </style>
