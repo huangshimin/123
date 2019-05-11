@@ -30,7 +30,7 @@ axios.interceptors.response.use(
   function(response) {
     // Do something with response data
     // console.log('响应回来啦啦！！')
-    console.log(response)
+    // console.log(response)
     if (response.data.meta.status == 200) {
       // this.$message.success(response.data.meta.msg)
       // 原型使用
@@ -46,7 +46,10 @@ axios.interceptors.response.use(
       router.push('login')
       // 删除token
       window.sessionStorage.clear('token')
+      // 如果token无效 data.data是null 后续代码会提示错误
+      response.data.data = []
     }
+    console.log(response)
     return response
   },
   function(error) {
@@ -126,6 +129,10 @@ const request = {
       roleName: params.roleName,
       roleDesc: params.roleDesc
     })
+  },
+  // 权限列表
+  getListRights(){
+    return axios.get(`rights/list`)
   }
 }
 

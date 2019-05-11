@@ -243,7 +243,7 @@ export default {
     // 获取数据的方法
     getUsers() {
       this.$request.getUsers(this.userData).then(res => {
-        // console.log(res);
+        // console.log(res);      [].users
         this.tableData = res.data.data.users;
         // 保存总条数
         this.total = res.data.data.total;
