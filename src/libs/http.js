@@ -141,6 +141,8 @@ const request = {
   // 获取订单列表
   getOrderList(params){
     return axios.get('orders',{
+      // params:params
+      // key axios中规定的值
       params
     })
   }

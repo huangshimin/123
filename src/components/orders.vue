@@ -23,13 +23,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            icon="el-icon-edit"
-            @click="handleEdit(scope.$index, scope.row)"
-            plain
-            size="mini"
-          ></el-button>
+          <el-button type="primary" icon="el-icon-edit" @click="editVisible=true" plain size="mini"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -41,11 +35,33 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="400"
     ></el-pagination>
+    <!-- 编辑框 -->
+    <el-dialog title="修改订单地址" :visible.sync="editVisible">
+      <el-form :model="editForm" :rules="addRules" ref="editForm">
+        <el-form-item label="省市区/县" label-width="120px">
+          <!-- 方法1 用级联选择器 -->
+          <el-cascader expand-trigger="hover" :options="options" v-model="selectedOptions2"></el-cascader>
+          <!-- 方法2 用独立的省市联动组件 -->
+          <v-distpicker></v-distpicker>
+        </el-form-item>
+        <el-form-item label="详细地址" label-width="120px">
+          <el-input v-model="editForm.address" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editVisible=false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import moment from "moment";
+// 导入省市区数据
+import options from "../assets/city_data2017_element.js";
+// 导入省市联动组件
+import VDistpicker from "v-distpicker";
 export default {
   name: "orders",
   // 数据
@@ -78,8 +94,21 @@ export default {
       orderData: {
         pagenum: 1,
         pagesize: 10
-      }
+      },
+      // 编辑框是否显示
+      editVisible: false,
+      editForm: {
+        address: ""
+      },
+      // 级联选择器数据
+      options,
+      // 选中的数据
+      selectedOptions2: []
     };
+  },
+  // 本地注册组件
+  components: {
+    VDistpicker
   },
   // 本地过滤器
   filters: {
