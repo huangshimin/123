@@ -133,6 +133,10 @@ const request = {
   // 权限列表
   getListRights(){
     return axios.get(`rights/list`)
+  },
+  // 获取展示的数据
+  getReports(){
+    return axios.get('reports/type/1')
   }
 }
 

@@ -76,7 +76,8 @@ const routes = [
 
 // 实例化路由对象
 const router = new VueRouter({
-  // 使用history模式 让他更美观
+  // 使用history模式 让ur更加美观
+  // #/ 变成 /的显示方式
   mode: 'history',
   routes
 })
