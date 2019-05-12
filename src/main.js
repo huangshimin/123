@@ -12,6 +12,8 @@ Vue.use(request)
 // 导入路由
 import router from './router'
 
+import store from './store'
+
 
 
 
@@ -22,5 +24,6 @@ Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
   // 挂在到vue实例上
-  router
+  router,
+  store
 }).$mount('#app')

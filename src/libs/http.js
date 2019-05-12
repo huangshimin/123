@@ -153,6 +153,18 @@ const request = {
   // 获取树形权限数据
   getRightsTree(){
     return axios.get('rights/tree')
+  },
+  // 为角色授权
+  // roleId角色id
+  // rids  id,id,id,权限id列表
+  setRoleRights(params){
+    return axios.post(`roles/${params.roleId}/rights`,{
+      rids:params.rids
+    })
+  },
+  // 获取菜单
+  getMenus(){
+    return axios.get('menus')
   }
 }
 

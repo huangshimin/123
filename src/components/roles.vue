@@ -131,10 +131,11 @@
         node-key="id"
         show-checkbox
         default-expand-all
+        ref="tree"
       ></el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="rightsVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('rightsForm')">确 定</el-button>
+        <el-button type="primary" @click="setRoleRights">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -250,7 +251,11 @@ export default {
     },
     // 弹出权限框
     handleRole(row) {
+      // 显示对话框
       this.rightsVisible = true;
+      // 保存角色数据方便后续使用
+      this.rightsForm = row;
+      // 接口调用
       this.$request.getRightsTree().then(res => {
         // console.log(res);
         // 保存数据
@@ -258,17 +263,32 @@ export default {
         // 设置选中的值
         let checkedIds = [];
         // 一级
-        row._children.forEach(v1 => {
-          checkedIds.push(v1.id);
-          // 二级
-          v1.children.forEach(v2 => {
-            checkedIds.push(v2.id);
-            // 三级
-            v2.children.forEach(v3 => {
-              checkedIds.push(v3.id);
-            });
+        // row._children.forEach(v1 => {
+        //   checkedIds.push(v1.id);
+        //   // 二级
+        //   v1.children.forEach(v2 => {
+        //     checkedIds.push(v2.id);
+        //     // 三级
+        //     v2.children.forEach(v3 => {
+        //       checkedIds.push(v3.id);
+        //     });
+        //   });
+        // });
+        function getCheckedKeys(item) {
+          // 查找后代的children 如果有 就遍历 并且 添加到数组中
+          item._children.forEach(v => {
+            checkedIds.push(v.id);
+            // 如果有后代就去找后代
+            if (v.children) {
+              // 为了保证代码的一致 重新赋值 _children属性
+              v._children = v.children;
+              getCheckedKeys(v);
+            }
           });
-        });
+        }
+        getCheckedKeys(row);
+        console.log(checkedIds);
+
         // 设置到data中
         this.defaultCheckedKeys = checkedIds;
       });
@@ -338,6 +358,36 @@ export default {
           // 复杂数据的传递 传递的是 地址（引用）
           // table中的某个数据也改变
           row._children = res.data.data;
+        });
+    },
+    // 为角色授权
+    setRoleRights() {
+      // 获取选中的值
+      // console.log(this.$refs.tree.getCheckedKeys())
+      // 生成id，id
+      // join方法 把数组 按照传入的值 拼接起来
+      const rids = this.$refs.tree.getCheckedKeys().join(",");
+      console.log(rids);
+
+      // 接口调用
+      this.$request
+        .setRoleRights({
+          // 直接获取之前弹出权限框保存的数据
+          roleId: this.rightsForm.id,
+          rids
+        })
+        .then(res => {
+          // console.log(res);
+          if (res.data.meta.status == 200) {
+            this.rightsVisible = false;
+            // 重新获取数据
+            this.getRoles();
+          }
+           this.$request.getMenus().then(res => {
+      // console.log(res);
+      // this.menuList = res.data.data;
+      this.$store.commit("changeMenuList",res.data.data)
+    });
         });
     }
   }
